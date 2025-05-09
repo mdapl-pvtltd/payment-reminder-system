@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: payment-reminder-api
+    env: python
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      pip install pytest
+      python -m pytest tests/
+    startCommand: gunicorn src.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: FLASK_ENV
+        value: production
+      - key: DEBUG
+        value: false
+      - key: PORT
+        value: 10000
+    healthCheckPath: /convert
+    autoDeploy: true 

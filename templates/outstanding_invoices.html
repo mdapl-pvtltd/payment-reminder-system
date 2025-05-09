@@ -201,11 +201,11 @@
             </div>
         </div>
 
-        <div class="note-text">Hello! This is a reminder that your account balance <b>₹29,000</b> was due as of <b>26th April 2025</b>. Please find your payables for your reference. If you have any queries regarding this account, please contact our office as soon as possible.</div>
+        <div class="note-text">Hello! This is a reminder that your account balance <b>{{ total_balance }}</b> was due as of <b>{{ current_date }}</b>. Please find your payables for your reference. If you have any queries regarding this account, please contact our office as soon as possible.</div>
 
         <div class="dealer-name">M/S. DEALER NAME</div>
 
-        <div class="date-line">As on Date: <strong>26/04/2025</strong></div>
+        <div class="date-line">As on Date: <strong>{{ current_date }}</strong></div>
 
         <table class="emoji-labels-table">
             <tr>
@@ -225,57 +225,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="row-red">
-                    <td>01/01/2025</td>
-                    <td>INV001</td>
-                    <td>₹ 5,000</td>
-                    <td>95 days</td>
+                {% for invoice in invoices %}
+                <tr class="{{ invoice.class }}">
+                    <td>{{ invoice.date }}</td>
+                    <td>{{ invoice.number }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.due_by }}</td>
                 </tr>
-                <tr class="row-yellow">
-                    <td>15/02/2025</td>
-                    <td>INV002</td>
-                    <td>₹ 7,000</td>
-                    <td>60 days</td>
-                </tr>
-                <tr class="row-green">
-                    <td>10/03/2025</td>
-                    <td>INV003</td>
-                    <td>₹ 12,000</td>
-                    <td>35 days</td>
-                </tr>
-                <tr class="row-green">
-                    <td>01/01/2025</td>
-                    <td>INV004</td>
-                    <td>₹ 5,000</td>
-                    <td>25 days</td>
-                </tr>
-              <tr class="row-green">
-                    <td>10/03/2025</td>
-                    <td>INV003</td>
-                    <td>₹ 12,000</td>
-                    <td>35 days</td>
-                </tr>
-                <tr class="row-green">
-                    <td>01/01/2025</td>
-                    <td>INV004</td>
-                    <td>₹ 5,000</td>
-                    <td>25 days</td>
-                </tr>
-              <tr class="row-green">
-                    <td>10/03/2025</td>
-                    <td>INV003</td>
-                    <td>₹ 12,000</td>
-                    <td>35 days</td>
-                </tr>
-                <tr class="row-green">
-                    <td>01/01/2025</td>
-                    <td>INV004</td>
-                    <td>₹ 5,000</td>
-                    <td>25 days</td>
-                </tr>
+                {% endfor %}
                 <tr>
                     <td colspan="2" style="text-align: right; font-weight: bold;">Total</td>
-                    <td colspan="1" style="font-weight: bold;">₹29,000</td>
+                    <td colspan="1" style="font-weight: bold;">{{ total_balance }}</td>
                 </tr>
             </tbody>
         </table>
