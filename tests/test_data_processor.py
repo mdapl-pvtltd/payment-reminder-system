@@ -7,6 +7,10 @@ def processor():
     return InvoiceDataProcessor()
 
 @pytest.fixture
+def custom_processor():
+    return InvoiceDataProcessor(red_threshold=90, yellow_threshold=45)
+
+@pytest.fixture
 def sample_invoices():
     return [
         {
@@ -49,10 +53,15 @@ def test_get_current_date(processor):
     today = datetime.now().strftime("%d/%m/%Y")
     assert current_date == today
 
-def test_get_row_class(processor):
+def test_get_row_class_default_thresholds(processor):
     assert processor.get_row_class(35) == "row-red"
     assert processor.get_row_class(20) == "row-yellow"
     assert processor.get_row_class(10) == "row-green"
+
+def test_get_row_class_custom_thresholds(custom_processor):
+    assert custom_processor.get_row_class(95) == "row-red"
+    assert custom_processor.get_row_class(50) == "row-yellow"
+    assert custom_processor.get_row_class(30) == "row-green"
 
 def test_process_invoices(processor, sample_invoices):
     result = processor.process_invoices(sample_invoices)
@@ -73,6 +82,19 @@ def test_process_invoices(processor, sample_invoices):
     assert first_invoice['amount'] == "₹ 496.00"
     assert first_invoice['due_by'] == "8 days"
     assert first_invoice['class'] == "row-green"
+
+def test_process_invoices_custom_thresholds(custom_processor, sample_invoices):
+    result = custom_processor.process_invoices(sample_invoices)
+    
+    # Check row classes with custom thresholds
+    for invoice in result['invoices']:
+        due_by = int(invoice['due_by'].split()[0])
+        if due_by > 90:
+            assert invoice['class'] == "row-red"
+        elif due_by > 45:
+            assert invoice['class'] == "row-yellow"
+        else:
+            assert invoice['class'] == "row-green"
 
 def test_process_invoices_empty_list(processor):
     result = processor.process_invoices([])

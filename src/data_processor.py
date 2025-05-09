@@ -3,9 +3,17 @@ from typing import List, Dict, Any
 from loguru import logger
 
 class InvoiceDataProcessor:
-    def __init__(self):
-        """Initialize the invoice data processor."""
-        logger.info("Invoice Data Processor initialized")
+    def __init__(self, red_threshold: int = 30, yellow_threshold: int = 15):
+        """
+        Initialize the invoice data processor.
+        
+        Args:
+            red_threshold (int): Days threshold for red rows
+            yellow_threshold (int): Days threshold for yellow rows
+        """
+        self.red_threshold = red_threshold
+        self.yellow_threshold = yellow_threshold
+        logger.info(f"Invoice Data Processor initialized with thresholds - Red: {red_threshold}, Yellow: {yellow_threshold}")
 
     def calculate_total_balance(self, invoices: List[Dict[str, Any]]) -> float:
         """
@@ -56,7 +64,7 @@ class InvoiceDataProcessor:
 
     def get_row_class(self, due_by: int) -> str:
         """
-        Determine CSS class for table row based on due_by days.
+        Determine CSS class for table row based on due_by days and thresholds.
         
         Args:
             due_by (int): Number of days until due
@@ -64,9 +72,9 @@ class InvoiceDataProcessor:
         Returns:
             str: CSS class name
         """
-        if due_by > 30:
+        if due_by > self.red_threshold:
             return "row-red"
-        elif due_by > 15:
+        elif due_by > self.yellow_threshold:
             return "row-yellow"
         else:
             return "row-green"

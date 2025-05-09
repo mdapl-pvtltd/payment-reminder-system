@@ -22,11 +22,6 @@ logger.add(
 app = Flask(__name__)
 config = Config()
 
-# Initialize converters and processors
-pdf_generator = PDFGenerator(config)
-image_converter = ImageConverter(config)
-invoice_processor = InvoiceDataProcessor()
-
 # Configure Jinja2
 template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')
 env = Environment(loader=FileSystemLoader(template_dir))
@@ -40,35 +35,43 @@ def render_template_with_data(template_name, data):
         logger.error(f"Error rendering template: {str(e)}")
         raise
 
-@app.route('/convert', methods=['POST'])
-def convert_template():
-    """API endpoint to convert HTML template to PDF or image."""
+@app.route('/generate/invoice', methods=['POST'])
+def generate_invoice():
+    """API endpoint to generate invoice PDF or image."""
     try:
         # Get request data
         data = request.get_json()
         if not data:
             return jsonify({"error": "No data provided"}), 400
 
-        # Extract parameters
-        template_name = data.get('template_name', 'outstanding_invoices.html')
-        output_format = data.get('output_format', 'pdf')  # 'pdf' or 'image'
-        invoices = data.get('invoices', [])
-        options = data.get('options', {})
+        # Get query parameters with defaults
+        output_format = request.args.get('output_format', 'pdf').lower()
+        red_threshold = int(request.args.get('red', 30))
+        yellow_threshold = int(request.args.get('yellow', 15))
 
-        logger.info(f"Processing request for template: {template_name}, format: {output_format}")
+        logger.info(f"Processing invoice generation request - Format: {output_format}, "
+                   f"Thresholds - Red: {red_threshold}, Yellow: {yellow_threshold}")
+
+        # Initialize processors with custom thresholds
+        pdf_generator = PDFGenerator(config)
+        image_converter = ImageConverter(config)
+        invoice_processor = InvoiceDataProcessor(
+            red_threshold=red_threshold,
+            yellow_threshold=yellow_threshold
+        )
 
         # Process invoice data
-        template_data = invoice_processor.process_invoices(invoices)
+        template_data = invoice_processor.process_invoices(data)
         
         # Render template
-        html_content = render_template_with_data(template_name, template_data)
+        html_content = render_template_with_data('outstanding_invoices.html', template_data)
         
         # Generate PDF
-        pdf_bytes = pdf_generator.generate_pdf(html_content, options.get('pdf_options'))
+        pdf_bytes = pdf_generator.generate_pdf(html_content)
         
         # Convert to requested format
-        if output_format.lower() == 'image':
-            output_bytes = image_converter.pdf_to_image(pdf_bytes, options.get('image_options'))
+        if output_format == 'image':
+            output_bytes = image_converter.pdf_to_image(pdf_bytes)
             mime_type = f'image/{config.IMAGE_FORMAT.lower()}'
         else:
             output_bytes = pdf_bytes
@@ -77,7 +80,7 @@ def convert_template():
         # Encode to base64
         base64_output = base64.b64encode(output_bytes).decode('utf-8')
         
-        logger.info("Conversion completed successfully")
+        logger.info("Invoice generation completed successfully")
         
         return jsonify({
             "status": "success",
@@ -86,57 +89,7 @@ def convert_template():
         })
 
     except Exception as e:
-        logger.error(f"Error processing request: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-
-@app.route('/convert-multi', methods=['POST'])
-def convert_template_multi():
-    """API endpoint to convert HTML template to multiple images (one per page)."""
-    try:
-        # Get request data
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
-        # Extract parameters
-        template_name = data.get('template_name', 'outstanding_invoices.html')
-        invoices = data.get('invoices', [])
-        options = data.get('options', {})
-
-        logger.info(f"Processing multi-page conversion request for template: {template_name}")
-
-        # Process invoice data
-        template_data = invoice_processor.process_invoices(invoices)
-        
-        # Render template
-        html_content = render_template_with_data(template_name, template_data)
-        
-        # Generate PDF
-        pdf_bytes = pdf_generator.generate_pdf(html_content, options.get('pdf_options'))
-        
-        # Convert to multiple images
-        image_bytes_list = image_converter.pdf_to_images(pdf_bytes, options.get('image_options'))
-        
-        # Encode all images to base64
-        base64_outputs = [
-            base64.b64encode(img_bytes).decode('utf-8')
-            for img_bytes in image_bytes_list
-        ]
-        
-        logger.info(f"Multi-page conversion completed successfully. Generated {len(base64_outputs)} images.")
-        
-        return jsonify({
-            "status": "success",
-            "data": base64_outputs,
-            "mime_type": f'image/{config.IMAGE_FORMAT.lower()}',
-            "page_count": len(base64_outputs)
-        })
-
-    except Exception as e:
-        logger.error(f"Error processing multi-page conversion request: {str(e)}")
+        logger.error(f"Error processing invoice generation request: {str(e)}")
         return jsonify({
             "status": "error",
             "message": str(e)
