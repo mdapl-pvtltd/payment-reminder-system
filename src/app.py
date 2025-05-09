@@ -8,6 +8,7 @@ from datetime import datetime
 from .config import Config
 from .pdf_generator import PDFGenerator
 from .image_converter import ImageConverter
+from .data_processor import InvoiceDataProcessor
 
 # Configure logger
 logger.add(
@@ -21,9 +22,10 @@ logger.add(
 app = Flask(__name__)
 config = Config()
 
-# Initialize converters
+# Initialize converters and processors
 pdf_generator = PDFGenerator(config)
 image_converter = ImageConverter(config)
+invoice_processor = InvoiceDataProcessor()
 
 # Configure Jinja2
 template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')
@@ -50,11 +52,14 @@ def convert_template():
         # Extract parameters
         template_name = data.get('template_name', 'outstanding_invoices.html')
         output_format = data.get('output_format', 'pdf')  # 'pdf' or 'image'
-        template_data = data.get('data', {})
+        invoices = data.get('invoices', [])
         options = data.get('options', {})
 
         logger.info(f"Processing request for template: {template_name}, format: {output_format}")
 
+        # Process invoice data
+        template_data = invoice_processor.process_invoices(invoices)
+        
         # Render template
         html_content = render_template_with_data(template_name, template_data)
         
@@ -98,11 +103,14 @@ def convert_template_multi():
 
         # Extract parameters
         template_name = data.get('template_name', 'outstanding_invoices.html')
-        template_data = data.get('data', {})
+        invoices = data.get('invoices', [])
         options = data.get('options', {})
 
         logger.info(f"Processing multi-page conversion request for template: {template_name}")
 
+        # Process invoice data
+        template_data = invoice_processor.process_invoices(invoices)
+        
         # Render template
         html_content = render_template_with_data(template_name, template_data)
         
