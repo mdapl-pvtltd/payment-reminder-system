@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reminder</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 794px;
+            min-height: 1123px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 65px;
+            height: 100px;
+            display: contained;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .company-details {
+            flex: 1;
+            padding-left: 20px;
+            text-align: center;
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 10px;
+           margin-bottom: 10px;
+            color: #333;
+        }
+
+        .company-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .top-date {
+            margin-left: auto;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .note-text {
+            margin: 20px 0;
+            font-size: 14px;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        .dealer-name {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #999;
+            margin: 10px 0 20px;
+        }
+
+        .date-line {
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #444;
+        }
+
+        .emoji-labels-table {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .emoji-labels-table td {
+            padding: 4px 10px;
+            vertical-align: top;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #ecf0f1;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0px;
+            gap: 20px;
+        }
+
+        .payment-info {
+            width: 30%;
+            font-size: 14px;
+        }
+
+        .signature {
+            width: 40%;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .row-red {
+            background-color: #e33b18;
+            color: #ffffff;
+        }
+
+        .row-yellow {
+            background-color: #eef500;
+        }
+
+        .row-green {
+            background-color: #079f02;
+            color: #ffffff;
+        }
+
+        .qr {
+            width: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .payment-info h4,
+        .signature h4 {
+            margin-bottom: 10px;
+        }
+
+        .payment-info p,
+        .signature p {
+            margin: 5px 0;
+        }
+
+        .pay-now-btn {
+            margin-top: 10px;
+            text-decoration: none;
+            background-color: #27ae60;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://madhukart.com/wp-content/uploads/2025/05/MDAPL-Logo-169x300.png" alt="Company Logo" class="logo">
+            </div>
+            <div class="company-details">
+                <div class="company-name">MADHUKAR DOMESTIC APPLIANCES PVT. LTD.</div>
+                <div class="company-info">Chamrajpet, Bengaluru, Karnataka<br>+91 96864 53710</div>
+            </div>
+        </div>
+
+        <div class="note-text">Hello! This is a reminder that your account balance <b>₹29,000</b> was due as of <b>26th April 2025</b>. Please find your payables for your reference. If you have any queries regarding this account, please contact our office as soon as possible.</div>
+
+        <div class="dealer-name">M/S. DEALER NAME</div>
+
+        <div class="date-line">As on Date: <strong>26/04/2025</strong></div>
+
+        <table class="emoji-labels-table">
+            <tr>
+                <td>🟥 Due [30] Days </br> Kindly Pay Accordingly.</td>
+                <td>🟨 Above [15] Days </br> Kindly Plan Accordingly.</td>
+                <td>🟩 Within [15] days </br> For Your Awareness.</td>
+            </tr>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice Date</th>
+                    <th>Invoice Number</th>
+                    <th>Amount</th>
+                    <th>Due By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row-red">
+                    <td>01/01/2025</td>
+                    <td>INV001</td>
+                    <td>₹ 5,000</td>
+                    <td>95 days</td>
+                </tr>
+                <tr class="row-yellow">
+                    <td>15/02/2025</td>
+                    <td>INV002</td>
+                    <td>₹ 7,000</td>
+                    <td>60 days</td>
+                </tr>
+                <tr class="row-green">
+                    <td>10/03/2025</td>
+                    <td>INV003</td>
+                    <td>₹ 12,000</td>
+                    <td>35 days</td>
+                </tr>
+                <tr class="row-green">
+                    <td>01/01/2025</td>
+                    <td>INV004</td>
+                    <td>₹ 5,000</td>
+                    <td>25 days</td>
+                </tr>
+              <tr class="row-green">
+                    <td>10/03/2025</td>
+                    <td>INV003</td>
+                    <td>₹ 12,000</td>
+                    <td>35 days</td>
+                </tr>
+                <tr class="row-green">
+                    <td>01/01/2025</td>
+                    <td>INV004</td>
+                    <td>₹ 5,000</td>
+                    <td>25 days</td>
+                </tr>
+              <tr class="row-green">
+                    <td>10/03/2025</td>
+                    <td>INV003</td>
+                    <td>₹ 12,000</td>
+                    <td>35 days</td>
+                </tr>
+                <tr class="row-green">
+                    <td>01/01/2025</td>
+                    <td>INV004</td>
+                    <td>₹ 5,000</td>
+                    <td>25 days</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right; font-weight: bold;">Total</td>
+                    <td colspan="1" style="font-weight: bold;">₹29,000</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <div class="signature">
+                <p>Regards,</p>
+                <p><strong>MADHUKAR DOMESTIC APPLIANCES PVT LTD</strong></p>
+                <p># 68, 1st Main Road, Albert Victor Road</p>
+                <p>Royan Circle, Chamrajpet</p>
+                <p>Bangalore - 560018</p>
+                <p>Phone no. : 41119695 / 41531700</p>
+                <p>Pin code : 560018</p>
+                <p>GSTIN : 29AABCM1465B1ZS</p>
+            </div>
+            <div class="payment-info">
+                <h4>Payment Info</h4>
+                <p>Bank Name : <b>HDFC Bank</b></p>
+                <p>A/c No. : <b>50200054881736</b></p>
+                <p>IFSC: <b>HDFC0000075</b></p>
+                <p>Branch: <b>Old Airport Road</b></p>
+            </div>
+
+            <div class="qr">
+                <img src="https://madhukart.com/wp-content/uploads/2025/04/MDAPL-UPI-QR.png" alt="QR Code">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
