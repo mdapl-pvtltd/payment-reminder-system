@@ -1,84 +1,108 @@
-# HTML to PDF/Image Converter API
+# HTML Conversion API
 
-This is a Python-based API service that converts HTML templates into PDFs or images, returning the output as a base64-encoded string.
+A REST API service that converts HTML to PDF and images using Puppeteer.
 
 ## Features
 
-- Convert HTML templates to PDF or images
-- Dynamic content injection via JSON payload
-- Support for image URLs in templates
-- Detailed logging
-- Base64 encoded output
+- HTML to PDF conversion with full styling support
+- HTML to Image conversion (PNG/JPEG)
+- High fidelity rendering
+- Fast cold-start performance
+- Docker support
+- Simple JSON API
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- Poppler (for PDF to image conversion)
-- Virtual environment (recommended)
+- Node.js 20+
+- Docker (optional)
 
 ## Installation
 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd payment-reminder-system
+cd html-conversion-api
 ```
 
-2. Create and activate a virtual environment:
+2. Install dependencies:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+npm install
 ```
 
-3. Install dependencies:
+3. Create a .env file:
 ```bash
-pip install -r requirements.txt
+PORT=3000
 ```
 
-4. Install Poppler:
-- On macOS: `brew install poppler`
-- On Ubuntu: `sudo apt-get install poppler-utils`
-- On Windows: Download from [poppler-windows](https://github.com/oschwartz10612/poppler-windows/releases/)
+## Running the Service
 
-## Usage
-
-1. Start the server:
+### Development
 ```bash
-python src/app.py
+npm run dev
 ```
 
-2. Send a POST request to `http://localhost:5000/convert` with the following JSON structure:
+### Production
+```bash
+npm start
+```
+
+### Docker
+```bash
+docker build -t html-conversion-api .
+docker run -p 3000:3000 html-conversion-api
+```
+
+## API Endpoints
+
+### Convert HTML to PDF
+```bash
+curl -X POST http://localhost:3000/api/pdf/convert \
+  -H "Content-Type: application/json" \
+  -d '{"html":"<html><body><h1>Hello</h1></body></html>"}' \
+  --output output.pdf
+```
+
+### Convert HTML to Image
+```bash
+curl -X POST http://localhost:3000/api/image/convert \
+  -H "Content-Type: application/json" \
+  -d '{"html":"<html><body><h1>Hello</h1></body></html>"}' \
+  --output output.png
+```
+
+## Options
+
+### PDF Options
 ```json
 {
-    "template_name": "outstanding_invoices.html",
-    "output_format": "pdf",  // or "image"
-    "data": {
-        // Your template data here
-    }
+  "format": "A4",
+  "margin": {
+    "top": "1cm",
+    "bottom": "1cm",
+    "left": "1cm",
+    "right": "1cm"
+  }
 }
 ```
 
-3. The API will return a JSON response with the base64-encoded output:
+### Image Options
 ```json
 {
-    "status": "success",
-    "data": "base64_encoded_string",
-    "mime_type": "application/pdf"  // or "image/png"
+  "type": "png",
+  "fullPage": true,
+  "transparent": false
 }
 ```
-
-## Configuration
-
-The application can be configured using environment variables or a `.env` file. See `src/config.py` for available options.
-
-## Logging
-
-Logs are stored in the `logs` directory with rotation and retention policies.
 
 ## Error Handling
 
-The API returns appropriate HTTP status codes and error messages in case of failures.
+The API returns JSON error responses in the following format:
+```json
+{
+  "error": "Error message"
+}
+```
 
 ## License
 
-[Your License Here]
+MIT 
