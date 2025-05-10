@@ -10,6 +10,15 @@ const convert = async (req, res, next) => {
 
     const image = await convertToImage(html, options);
     
+    if (options?.base64) {
+      const contentType = options?.type === 'jpeg' ? 'image/jpeg' : 'image/png';
+      return res.json({
+        data: image.toString('base64'),
+        type: contentType,
+        filename: `converted.${options?.type || 'png'}`
+      });
+    }
+    
     const contentType = options?.type === 'jpeg' ? 'image/jpeg' : 'image/png';
     res.setHeader('Content-Type', contentType);
     res.setHeader('Content-Disposition', `attachment; filename=converted.${options?.type || 'png'}`);
