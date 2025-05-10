@@ -10,6 +10,14 @@ const convert = async (req, res, next) => {
 
     const pdf = await convertToPDF(html, options);
     
+    if (options?.base64) {
+      return res.json({
+        data: pdf.toString('base64'),
+        type: 'application/pdf',
+        filename: 'converted.pdf'
+      });
+    }
+    
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=converted.pdf');
     res.send(pdf);
